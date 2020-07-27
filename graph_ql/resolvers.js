@@ -206,7 +206,8 @@ async function createLike({ announcementId }, { isAuth, userId }) {
             } else {
                 // return await Noted_as_favourite.destroy({ where: { announcementId, userId } })
                 await Noted_as_favourite.destroy({ where: { announcementId, userId } })
-                return { id: announcementId }
+                return undefined
+                // return { id: announcementId }
             }
         } catch (e) {
             console.log('Resolvers  createLike', e)
@@ -216,28 +217,22 @@ async function createLike({ announcementId }, { isAuth, userId }) {
     }
 
 }
-// async function getFavourite({ userId }) {
-//     return await Noted_as_favourite.findAll({ where: { userId } })
-// }
-// token = {
-//     id: 15,
-//     role: "User"
-// }
-async function updateMessage(obj, { isAuth, userId }) {
-    if (isAuth) {
-        try {
-            if (+obj.outId === +userId) {
-                let message = await Message.findOne({ where: { id: obj.id } })
-                return await message.update({ ...obj })
-            }
-        } catch (e) {
-            console.log("Resolvers updateMessage", e)
-        }
-    } else {
-        throw new Error(unauthorizedUser)
-    }
 
-}
+// async function updateMessage(obj, { isAuth, userId }) {
+//     if (isAuth) {
+//         try {
+//             if (+obj.outId === +userId) {
+//                 let message = await Message.findOne({ where: { id: obj.id } })
+//                 return await message.update({ ...obj })
+//             }
+//         } catch (e) {
+//             console.log("Resolvers updateMessage", e)
+//         }
+//     } else {
+//         throw new Error(unauthorizedUser)
+//     }
+
+// }
 
 async function getPhones({ userId }) {
     return await Phone.findAll({ where: { userId } })
@@ -257,21 +252,21 @@ async function createPhone(obj, req) {
         } catch (e) {
             console.log("resolvers removeUser", e)
         }
-    }else{
-            throw new Error(unauthorizedUser)
-        }
+    } else {
+        throw new Error(unauthorizedUser)
+    }
 }
 
-async function createPhoto(obj,req) {
+async function createPhoto(obj, req) {
     if (req.isAuth) {
         try {
-    return await Photo.create({ ...obj })
-} catch (e) {
-    console.log("resolvers createPhoto", e)
-}
-}else{
-    throw new Error(unauthorizedUser)
-}
+            return await Photo.create({ ...obj })
+        } catch (e) {
+            console.log("resolvers createPhoto", e)
+        }
+    } else {
+        throw new Error(unauthorizedUser)
+    }
 }
 
 async function getSubCategories({ categoryId }, context) {
@@ -283,8 +278,9 @@ async function removeUser(obj, req) {
         try {
             let user = await User.findByPk(obj.id)
             if (user) {
-                let announcements = await Announcement.findAll({ where: { userId: obj.id } })
-                announcements.forEach(async (a) => await a.update({ isDisabled: true }))
+                // let announcements = 
+                await Announcement.update({ isDisabled: true},{ where: { userId: obj.id } })
+                // announcements.forEach(async (a) => await a.update({ isDisabled: true }))
                 return await user.update({ isDisabled: true })
             } else {
                 return null
@@ -312,19 +308,38 @@ async function removePhone(obj, req) {
 }
 
 async function removePhoto(obj, req) {
-    if(req.isAuth){
-    try {
-        let photo = await Photo.findByPk(obj.id)
-        let isDestroyed = await Photo.destroy({ where: { id: obj.id } })
-        if(isDestroyed){
-            return photo
-        }else{
-            return null
+    if (req.isAuth) {
+        try {
+            let photo = await Photo.findByPk(obj.id)
+            let isDestroyed = await Photo.destroy({ where: { id: obj.id } })
+            if (isDestroyed) {
+                return photo
+            } else {
+                return null
+            }
+        } catch (e) {
+            console.log("resolvers removePhoto", e)
         }
-    } catch (e) {
-        console.log("resolvers removePhoto", e)
+    } else {
+        throw new Error(unauthorizedUser)
     }
-    }else{
+}
+async function setPhotoMain(obj, req) {
+    if (req.isAuth) {
+        try {
+            if (obj.userId) {
+                await Photo.update({ isMain: false },{ where : {userId: obj.userId}})
+                await Photo.update({ isMain: true },{ where : {id: obj.id}})
+                return await Photo.findAll({ where: { userId: obj.userId } })
+            }else if (obj.announcementId) {
+                await Photo.update({ isMain: false },{ where : {announcementId: obj.announcementId}})
+                await Photo.update({ isMain: true },{ where : {id: obj.id}})
+                return await Photo.findAll({ where: { announcementId: obj.announcementId } })
+            }
+        } catch (e) {
+            console.log("resolvers removePhoto", e)
+        }
+    } else {
         throw new Error(unauthorizedUser)
     }
 }
@@ -346,7 +361,7 @@ var root = {//объект соответствия названий в type Que
     getCurrencies,
     // getMessages,
     createMessage,
-    updateMessage,
+    // updateMessage,
     createLike,
     // getFavourite,
     getPhones,
@@ -357,6 +372,7 @@ var root = {//объект соответствия названий в type Que
     removePhone,
     removePhoto,
     getUserPhotos,
+    setPhotoMain,
 };
 
 module.exports.root = root;

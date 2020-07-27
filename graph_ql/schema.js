@@ -37,6 +37,7 @@ var schema = buildSchema(`
         removeUser( id: ID!):User
         removePhone(id:ID!):[Phone]
         removePhoto(id:ID!):Photo
+        setPhotoMain(id:ID!,userId:ID,announcementId:ID):[Photo]
     }
 
     type Announcements{
@@ -139,6 +140,7 @@ var schema = buildSchema(`
         userId:ID
         announcementId:ID
         messageId:ID
+        isMain:Boolean
     }
     
     type SubCategory{
