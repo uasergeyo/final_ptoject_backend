@@ -1,4 +1,4 @@
-const { Photo, User, Phone, Announcement, Noted_as_favourite, Message, Area, City, Currency, Category, Sub_category, } = require('../database/scheme.js')
+const { Photo, User, Phone, Announcement, Noted_as_favourite, Message, Area, City, Currency, Category, Sub_category, } = require('../database/schema.js')
 let requestParamsCreator = require('../searchRequestProcessing.js')
 const secret = require('../constants/salt')
 const unauthorizedUser = require('../constants/unauthorizedUser')

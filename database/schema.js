@@ -1,9 +1,6 @@
 const Sequelize = require('sequelize');
 const { Op } = require("sequelize");
 
-// const Sequelize = require('../node_modules/sequelize');
-// const { Op } = require("../node_modules/sequelize");
-
 const sequelize = new Sequelize('buy_and_sale_db', 'root', 'FGghJfgjFJF56565FgsdDDE45gh', {
     dialect: 'mysql',
     host: 'localhost'
@@ -115,7 +112,7 @@ Announcement.init({
         type: Sequelize.TEXT,
     },
     announcementPrice: {
-        type: Sequelize.DECIMAL(6,2),
+        type: Sequelize.DECIMAL(9,2),
     },
     isDisabled: {
         type: Sequelize.BOOLEAN,
@@ -222,22 +219,6 @@ Announcement.hasMany(Noted_as_favourite);
 Noted_as_favourite.belongsTo(Announcement);
 
 //-------------------------------------------------------------------------------------------------------------------------
-
-class Message extends Sequelize.Model {
-
-}
-
-Message.init({
-    text: Sequelize.STRING
-}, { sequelize, modelName: "message" })
-
-User.hasMany(Message, { as: 'ins', foreignKey: 'inId' });
-User.hasMany(Message, { as: 'outs', foreignKey: 'outId' });
-
-Message.belongsTo(User, { as: 'in', sourceKey: 'inId' });
-Message.belongsTo(User, { as: 'out', sourceKey: 'outId' });
-
-//--------------------------------------------------------------------------------------------------------------
 class Area extends Sequelize.Model {
     get cities(){
         return this.getCities()
@@ -273,8 +254,6 @@ User.hasMany(Photo);
 Photo.belongsTo(User);
 Announcement.hasMany(Photo);
 Photo.belongsTo(Announcement);
-Message.hasMany(Photo);
-Photo.belongsTo(Message);
 
 class Currency extends Sequelize.Model {
 
@@ -295,7 +274,7 @@ class Category extends Sequelize.Model {
 
 Category.init({
     categoryName: Sequelize.STRING,
-    categoryPhoto: Sequelize.STRING,
+    categoryImage: Sequelize.STRING,
 }, { sequelize, modelName: "category", timestamps: false })
 
 Announcement.belongsTo(Category);
@@ -313,50 +292,20 @@ Announcement.belongsTo(Sub_category);
 Sub_category.hasMany(Announcement);
 Sub_category.belongsTo(Category);
 Category.hasMany(Sub_category);
-//------------------------------------------------------------------------
-//------------------------------------------------------------------
 
-
-// class Role extends Sequelize.Model{
-
-// }
-
-// Role.init({
-//     roleName:Sequelize.STRING
-// },{sequelize, modelName:"role", timestamps:false})
-
-// Role.hasMany(User);
-// User.belongsTo(Role);
-
-// User.hasMany(Role);
-// Role.belongsTo(User)
-
-
-
-// User.belongsToMany(Role,{through:RoleList});
-// Role.belongsToMany(User,{through:RoleList});
 
 sequelize.sync();
-
-
-
 
 module.exports.Photo = Photo;
 module.exports.User = User;
 module.exports.Phone = Phone;
 module.exports.Announcement = Announcement;
 module.exports.Noted_as_favourite = Noted_as_favourite;
-module.exports.Message = Message;
 module.exports.Area = Area;
 module.exports.City = City;
 module.exports.Currency = Currency;
 module.exports.Category = Category;
 module.exports.Sub_category = Sub_category;
-// module.exports.Brand = Brand;
-// module.exports.Type = Type;
-// module.exports.State = State;
-// module.exports.Role = Role;
-
 
 
 // ;(async () => {
@@ -367,7 +316,22 @@ module.exports.Sub_category = Sub_category;
 
 
 //     let cat = ["Детский мир", "Недвижимость", "Транспорт", "Запчасти для транспорта",  "Работа",  "Животные",  "Дом и сад",  "Электроника",  "Бизнес и услуги",  "Мода и стиль", "Хобби, отдых и спорт",  "Отдам даром",  "Обмен"]
-//     let subcats=[
+//     let categoryImg=[
+//         "http://localhost:4000/content/categories/category_baby.png",
+//         "http://localhost:4000/content/categories/category_real_estate.png",
+//         "http://localhost:4000/content/categories/category_vehicles.png",
+//         "http://localhost:4000/content/categories/category_spare_parts.png",
+//         "http://localhost:4000/content/categories/category_job.png",
+//         "http://localhost:4000/content/categories/category_animals.png",
+//         "http://localhost:4000/content/categories/category_house_and_garden.png",
+//         "http://localhost:4000/content/categories/category_electronics.png",
+//         "http://localhost:4000/content/categories/category_business_and_services.png",
+//         "http://localhost:4000/content/categories/category_fashion_and_style.png",
+//         "http://localhost:4000/content/categories/category_leisure_relax.png",
+//         "http://localhost:4000/content/categories/category_give_for_free.png",
+//         "http://localhost:4000/content/categories/category_exchange.png",
+//     ]
+// let subcats=[
 //         ["Детская одежда","Детская обувь", "Детские коляски","Детские автокресла", "Детская мебель","Игрушки", "Детский транспорт", "Товары для кормления", "Товары для школьников", "Прочие детские товары", ],
 //         ["Квартиры, комнаты","Дома","Земля", "Коммерческая недвижимость","Гаражи, парковки","Посуточная аренда жилья","Предложения от застройщиков", "Недвижимость за рубежом"],
 //         ["Легковые автомобили","Автомобили из Польши", "Грузовые автомобили", "Автобусы", "Мото", "Спецтехника", "Сельхозтехника", "Водный транспорт", "Воздушный транспорт", "Прицепы / дома на колесах", "Другой транспорт", "Запчасти для транспорта", "Нерастаможенные автомобили","Электромобили" ],
@@ -383,7 +347,7 @@ module.exports.Sub_category = Sub_category;
 //         ["Недвижимость", "Транспорт", "Запчасти для транспорта","Электроника","Мода и стиль","Другое"],
 // ]   
 // for(let i=0;i<cat.length;i++){
-//     let category = await Category.create({ categoryName: cat[i] })
+//     let category = await Category.create({ categoryName: cat[i],categoryImage:categoryImg[i] })
 //     for(let y of subcats[i]){
 //         let sub_category = await Sub_category.create({ subCategoryName: y,categoryId:category.id })
 //     }
