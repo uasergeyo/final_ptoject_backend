@@ -106,7 +106,7 @@ async function getUser({ id }, req) {
 }
 
 
-async function createUser(obj) {   ///+++++++
+async function createUser(obj) {
     const doUserExists = await User.findOne({ where: { userEmail: obj.userEmail } });
     if (doUserExists) {
         throw new Error('Этот email уже используется !')
@@ -132,18 +132,32 @@ async function logInAuth({ userEmail, userPassword }) {
     return { id: user.id, token: token };
 }
 
-async function updateUser(obj, req) {   ///+++++++
+async function updateUser(obj, req) {
     if (req.isAuth) {
-        try {
-            let user = await User.findByPk(req.userId)
-            return await user.update({ ...obj })
-        } catch (e) {
-            console.log("resolvers updateUser", e)
+        console.log(obj,obj.userEmail)
+        if (obj.userEmail) {
+            let users = await User.findAll({ where: { userEmail: obj.userEmail } })
+            if (users.length > 0 && users[0].dataValues.id !== req.userId) {
+                throw new Error('Этот email уже используется !')
+            } else {
+                try {
+                    let user = await User.findByPk(req.userId)
+                    return await user.update({ ...obj })
+                } catch (e) {
+                    console.log("resolvers updateUser", e)
+                }
+            }
+        } else {
+            try {
+                let user = await User.findByPk(req.userId)
+                return await user.update({ ...obj })
+            } catch (e) {
+                console.log("resolvers updateUser", e)
+            }
         }
     } else {
         throw new Error(unauthorizedUser)
     }
-
 }
 
 async function getAreas() {
@@ -154,17 +168,10 @@ async function getAreas() {
     }
 }
 
-// async function getArea({id}){
-//     return await Area.findByPk(id)
-// }
-
 async function getCategories() {
     return await Category.findAll()
 }
 
-// async function getCities({ areaId }) {
-//     return await City.findAll({ where: { areaId } })
-// }
 async function getCurrencies() {
     try {
         return await Currency.findAll()
@@ -172,17 +179,6 @@ async function getCurrencies() {
         console.log('resolveers getCurrencies', e)
     }
 }
-
-// async function getMessages({ id }) {
-//     return await Message.findAll({
-//         where: {
-//             [Op.or]: [
-//                 { inId: id },
-//                 { outId: id }
-//             ]
-//         }
-//     })
-// }
 
 async function createMessage(obj, req) {
     if (req.isAuth) {
@@ -204,10 +200,8 @@ async function createLike({ announcementId }, { isAuth, userId }) {
             if (doLikeExists == false) {
                 return await Noted_as_favourite.create({ announcementId, userId })
             } else {
-                // return await Noted_as_favourite.destroy({ where: { announcementId, userId } })
                 await Noted_as_favourite.destroy({ where: { announcementId, userId } })
                 return undefined
-                // return { id: announcementId }
             }
         } catch (e) {
             console.log('Resolvers  createLike', e)
@@ -217,22 +211,6 @@ async function createLike({ announcementId }, { isAuth, userId }) {
     }
 
 }
-
-// async function updateMessage(obj, { isAuth, userId }) {
-//     if (isAuth) {
-//         try {
-//             if (+obj.outId === +userId) {
-//                 let message = await Message.findOne({ where: { id: obj.id } })
-//                 return await message.update({ ...obj })
-//             }
-//         } catch (e) {
-//             console.log("Resolvers updateMessage", e)
-//         }
-//     } else {
-//         throw new Error(unauthorizedUser)
-//     }
-
-// }
 
 async function getPhones({ userId }) {
     return await Phone.findAll({ where: { userId } })
@@ -278,9 +256,7 @@ async function removeUser(obj, req) {
         try {
             let user = await User.findByPk(obj.id)
             if (user) {
-                // let announcements = 
-                await Announcement.update({ isDisabled: true},{ where: { userId: obj.id } })
-                // announcements.forEach(async (a) => await a.update({ isDisabled: true }))
+                await Announcement.update({ isDisabled: true }, { where: { userId: obj.id } })
                 return await user.update({ isDisabled: true })
             } else {
                 return null
@@ -328,12 +304,12 @@ async function setPhotoMain(obj, req) {
     if (req.isAuth) {
         try {
             if (obj.userId) {
-                await Photo.update({ isMain: false },{ where : {userId: obj.userId}})
-                await Photo.update({ isMain: true },{ where : {id: obj.id}})
+                await Photo.update({ isMain: false }, { where: { userId: obj.userId } })
+                await Photo.update({ isMain: true }, { where: { id: obj.id } })
                 return await Photo.findAll({ where: { userId: obj.userId } })
-            }else if (obj.announcementId) {
-                await Photo.update({ isMain: false },{ where : {announcementId: obj.announcementId}})
-                await Photo.update({ isMain: true },{ where : {id: obj.id}})
+            } else if (obj.announcementId) {
+                await Photo.update({ isMain: false }, { where: { announcementId: obj.announcementId } })
+                await Photo.update({ isMain: true }, { where: { id: obj.id } })
                 return await Photo.findAll({ where: { announcementId: obj.announcementId } })
             }
         } catch (e) {
