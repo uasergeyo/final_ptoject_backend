@@ -1,21 +1,3 @@
-// let searchRequest = {
-//             areaName:"Beликобобруйская обл.",
-//             cityName:"Великобобруйск",
-//             categoryName:"trst",
-//             subCategoryName:"test_Subcategory",
-//             hasPhoto:true,
-//             hasDelivery:true,
-//             priceFrom:121,
-//             priceTo:435,
-//             sort:"price",
-//             currency:1,
-//             findEverywhere:true,
-//         }
-//         requestParamsCreator(searchRequest)  
-
-        // areaId:Int,cityId:Int,categoryId:Int,subCategoryId:Int,currencyId:Int,
-        // ['defaultScope','withPhoto',{ method: ['findInTitle', "19"] },{method: ['findInBody',"19"] },{ method:['inRange',78,546]}]
-
 module.exports = function requestParamsCreator(obj){
             let queryParams = {"order":[["id", 'DESC']]};
             let paramsForDbSearch ={};
@@ -55,9 +37,6 @@ module.exports = function requestParamsCreator(obj){
                         case "currencyId":
                             paramsForDbSearch["currencyId"] = obj["currencyId"];
                             break;
-                        // case "findEverywhere":            
-                        //     // scopesForSearch.push({method: ['findInBody',obj["requestText"]] }) 
-                        //     break;
                         case  "priceFrom":
                             if (obj.priceTo){
                                 scopesForSearch.push({ method:['inRange',obj.priceFrom,obj.priceTo]}) 
@@ -79,8 +58,4 @@ module.exports = function requestParamsCreator(obj){
         }catch(e){
             console.log("SearchRequestProcessing",e)
         }
-
-            // "order" in queryParams?console.log("with sort  ",[scopesForSearch,{where:paramsForDbSearch,...queryParams}][1]):console.log("without SORT ",[scopesForSearch,paramsForDbSearch]);
-            // return "order" in queryParams?[scopesForSearch,{where:paramsForDbSearch,...queryParams}]:[scopesForSearch,paramsForDbSearch];
-            // return [scopesForSearch,{where:paramsForDbSearch,...queryParams}]
         }

@@ -3,172 +3,16 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-// const expressJwt = require('express-jwt');
-// const jwt = require('jsonwebtoken');
 const express_graphql = require('express-graphql');
 const isAuth = require('./middleware/isAuth')
-// const { buildSchema } = require('graphql');
 app.use(cors())
-// var GraphQLDate = require('graphql-date')
-const {User} = require('./database/scheme.js')
-
-
+const {User} = require('./database/schema.js')
 const fs = require('fs')
-
 app.use(express.static('public'));
-
-
-
-// const Sequelize = require('sequelize');
-// const { Op } = require("sequelize");
-
-// const sequelize = new Sequelize('buy_and_sale_db', 'root', 'FGghJfgjFJF56565FgsdDDE45gh', {
-//     dialect: 'mysql',
-//     host: 'localhost'
-// })
-
 const schema = require('./graph_ql/schema.js');
 const {root} = require('./graph_ql/resolvers.js');
-// const { mapFinderOptions } = require('sequelize/types/lib/utils');
 
 
-
-// app.use('/graphql', express_graphql( (req, res) => ({ //объект не подойдет, так как контекст разный от запроса к запросу
-//     schema: schema,
-//     rootValue: root,
-//     graphiql: true,
-//     context: {user: req.user, session: req.session} //сразу для JWT и cookie-session
-// })));
-
-
-// ..........................................................................................................
-// const secret = `s_e_c_Э%%Эr_"e"t'_k'e'яяяЯy___` //тот самый секретный ключ, которым подписывается каждый токен, выдаваемый клиенту
-
-
-// function jwtWare() {
-//     // const { secret } = config;
-//     return expressJwt({ secret }).unless({ //блюдет доступ к приватным роутам
-//         path: [
-//             // public routes that don't require authentication
-//             '/graphql/authentificate',
-//             '/graphql/find-announcements',
-            
-//         ]
-//     });
-// }
-
-// function errorHandler(err, req, res, next) {
-//     if (typeof (err) === 'string') {
-//         // custom application error
-//         return res.status(400).json({ message: err });
-//     }
-
-//     if (err.name === 'UnauthorizedError') { //отлавливает ошибку, высланную из expressJwt
-//         // jwt authentication error
-//         return res.status(401).json({ message: 'Для дальнейшей работы нужна авторизация.' });
-//     }
-
-//     // default to 500 server error
-//     return res.status(500).json({ message: err.message });
-// }
-
-// async function authenticate({ userEmail, userPassword }) { //контроллер авторизации
-//     console.log(userEmail, userPassword)
-//     const u = await User.findOne({ where: { userEmail: userEmail, userPassword: userPassword } });
-//     let user = {                            
-//         id: u.id,
-//         userName: u.userName,
-//         isDisabled: u.isDisabled,
-//         userInfo: u.userInfo
-//     }
-//     if (user) {
-//         const token = jwt.sign({ sub: user.id }, secret); //подписывам токен нашим ключем
-//         return { //отсылаем интересную инфу
-//             user,
-//             token
-//         };
-//     }
-// }
-
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
-// app.use(cors());
-
-// // use JWT auth to secure the api
-
-// // api routes
-// app.post('/graphql', function (req, res, next) {
-//     authenticate(req.body)
-//         .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' }))
-//         .catch(err => next(err));
-// });
-
-// app.use(jwtWare());
-
-// // global error handler
-// app.get('/', (req, res, next) => {
-//     res.json({ all: 'ok' })
-//     //next()
-// });
-
-// app.use(errorHandler);
-
-// app.get("/get-it", (req, res) => {
-//     res.status(200).send({ all: 'ok' })
-// })
-// // ............................................................................................
-
-
-// var multer = require('multer')
-// const fs = require('fs')
-// app.use(express.static('public'));
-
-
-// app.post('/upload', (req, res) => {
-//     let fileName = Math.random().toString('36')
-//     fileName     = `${fileName}`
-//     let fileStream = fs.createWriteStream('public/announcements/' + fileName);
-//     req.pipe(fileStream)
-//     // req.on('end', () =>{
-//     //     res.send(fileName)
-//     // })
-//     res.send({fileName})
-    
-// })
-
-
-
-
-
-// var storage = multer.diskStorage({
-//      destination: './public',
-//      filename: Math.random().toString('36')
-//      }
-// );
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//     cb(null, 'public')
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + '-' +file.originalname )
-//   }
-// })
-
-// var upload = multer({ storage: storage }).single()
-
-// app.post('/upload',function(req, res) {
-     
-//     upload(req, res, function (err) {
-//            if (err instanceof multer.MulterError) {
-//                return res.status(500).json(err)
-//            } else if (err) {
-//                return res.status(500).json(err)
-//            }
-//       return res.status(200).send(req.file)
-
-//     })
-
-// });
 
 app.post('/upload/:folder', (req, res) => {
     let fileName = Math.random().toString('36')
@@ -184,42 +28,18 @@ app.post('/upload/:folder', (req, res) => {
 
 
 
-// ......................................................................................................
 app.use(isAuth);
 
-app.use('/graphql', express_graphql( (req, res) => ({ //объект не подойдет, так как контекст разный от запроса к запросу
+app.use('/graphql', express_graphql( (req, res) => ({ 
     schema: schema,
     rootValue: root,
     graphiql: true,
-    // context: {user: req.user, session: req.session} //сразу для JWT и cookie-session
 })));
-
-
-
-
-
-
-//app.get('/', function (req, res) {
-  //res.send('Hello World!');
-//});
-//
-
-
-
-
-
 
 app.listen(4000, console.log("Listen ### 4000"))
 
 
 
-
-// searchAnnouncements().then(res=>res.map(a=>console.log(a)))
-// let requestParamsCreator = require('./searchRequestProcessing.js')
-
-
-
-// console.log(requestParamsCreator(searchRequest))
 
 
 

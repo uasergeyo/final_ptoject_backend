@@ -90,7 +90,7 @@ var schema = buildSchema(`
     type Category{
         id: ID
         categoryName: String
-        categoryPhoto: String
+        categoryImage: String
         subcategories:[SubCategory]
     }
 
@@ -152,41 +152,3 @@ var schema = buildSchema(`
 
 module.exports = schema;
 
-
-
-
-
-// type Query {
-//     getAnnouncement(id:Int!):Announcement
-//     getAnnouncements:[Announcement]
-//     searchAnnouncements(areaId:Int,cityId:Int,categoryId:Int,subCategoryId:Int,currencyId:Int,hasPhoto:Boolean,hasDelivery:Boolean,priceFrom:Float,priceTo:Float,
-//         findEverywhere:Boolean,requestText:String,sort:String):[Announcement]
-//     getUser(id:Int!):User
-//     getAreas:[Area]
-//    * getArea(id:Int!):Area
-//     getCategories:[Category]
-//    * getCities(areaId: Int!):[City]
-//     getCurrencies:[Currency]
-//    * getMessages(inId:Int!,outId:Int!):[Message]
-//    * getFavourite(userId:Int!):[Like]
-//     getPhones(userId: Int!):[Phone]
-//     getSubCategories(categoryId:Int!):[SubCategory]
-//     getPhotos(announcementId:Int!):[Photo]
-//     getUserPhotos(userId:Int):[Photo]
-//     getUserAnnouncements(userId:Int):[Announcement]
-    
-// }
-// type Mutation {
-//     createAnnouncement(announcementHeader:String!, announcementText:String!, announcementPrice:Float,hasDelivery:Boolean!,
-//                        userId:Int!, areaId:Int!, cityId:Int!, currencyId:Int!, categoryId:Int!, subCategoryId:Int!):Announcement
-//     editAnnouncement(userId:Int!,id:Int!,announcementHeader:String!, announcementText:String!, announcementPrice:Float,hasDelivery:Boolean!,
-//                      isDisabled:Boolean, areaId:Int!, cityId:Int!, currencyId:Int, categoryId:Int, subCategoryId:Int):Announcement
-//     createUser(userEmail: String!,userPassword: String!):User
-//     updateUser(userName: String!,isDisabled: Boolean, userInfo: String, userEmail: String,
-//                userPassword: String, areaId:Int, cityId: Int,id:Int):User
-//     createMessage(text: String,inId: Int, outId: Int):Message
-//     updateMessage(id: Int, text: String, inId: Int, outId: Int):Message
-//     createLike(announcementId: Int!,userId: Int!):Like
-//     createPhone(phone: String!, userId: Int!):Phone
-//     createPhoto(photoLink: String!, userId:Int, announcementId:Int, messageId:Int):Photo
-// }

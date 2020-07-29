@@ -1,12 +1,8 @@
-const { Photo, User, Phone, Announcement, Noted_as_favourite, Message, Area, City, Currency, Category, Sub_category, } = require('../database/schema.js')
+const { Photo, User, Phone, Announcement, Noted_as_favourite,Area, City, Currency, Category, Sub_category, } = require('../database/schema.js')
 let requestParamsCreator = require('../searchRequestProcessing.js')
 const secret = require('../constants/salt')
 const unauthorizedUser = require('../constants/unauthorizedUser')
 const jwt = require('jsonwebtoken');
-// const isAuth = require('../middleware/isAuth')
-
-// const Sequelize = require('../node_modules/sequelize');
-// const { Op } = require("../node_modules/sequelize");
 
 async function getAnnouncement({ id }) {
     return await Announcement.findByPk(id)
@@ -20,44 +16,22 @@ async function searchAnnouncements({ limit, offset, ...rest }) {     ///+++++++
     } catch (e) {
         console.log("Resolvers searchAnnouncements", e)
     }
-    // let credentials = requestParamsCreator(obj)
-    // console.log("My data ",obj)
-    // let scopeSet = ['defaultScope','withPhoto',{ method: ['findInTitle', "19"] },{method: ['findInBody',"19"] },{ method:['inRange',78,546]}]
-
-    // return await Announcement.scope([...credentials[0]]).findAll({...credentials[1]})
-
-    // return await Announcement.scope(...scopeSet).findAll({where:{areaId:3,cityId:1,categoryId:3,subCategoryId:4,currencyId:1}})
-    // return await Announcement.scope('withPhoto',{ method: ['findInTitle', "19"] },{method: ['findInBody',"19"] },{ method:['inRange',78,546]}).findAll()
-
-    // // let findAll = await Announcement.scope({ method: ['inRange', 19, 130] }).findAll()
-    // // let findLess = await Announcement.scope({ method: ['less', 530] }).findAll()
-    // // let findMore = await Announcement.scope({ method: ['more', 530] }).findAll()
-
 }
 
 async function getAnnouncements({ limit, offset }) {      ///+++++++++++++++
-    // console.log(limit,'sdsdsdsd',offset)
     return await Announcement.findAndCountAll({
-        // let i=await Announcement.findAndCountAll({
-        // where: {...},
-        // order: [...],
         limit,
         offset,
     })
-    // getAnnouncements(limit:Int):[Announcement]
-    // console.log("getAnnouncements(limit:Int):[Announcement]",i)
-
-
 }
 
-// async function getAnnouncements() {         ///+++++++++++++++
-//     return await Announcement.findAll()
-// }
-
-async function editAnnouncement(obj, req) {          ///+++++++
+async function editAnnouncement(obj, req) {        
     if (req.isAuth && req.userId == obj.userId) {
         try {
             let announcement = await Announcement.findByPk(obj.id);
+            if(obj.isDisabled){
+               await Noted_as_favourite.findAll({ where: { announcementId:obj.id} })
+            }
             return await announcement.update({ ...obj }, { where: { id: obj.id } })
         } catch (e) {
             console.log('resolvers editAnnouncement ', e)
@@ -67,7 +41,7 @@ async function editAnnouncement(obj, req) {          ///+++++++
     }
 }
 
-async function createAnnouncement({ photoLink, ...data }, req) {   ///+++++++
+async function createAnnouncement({ photoLink, ...data }, req) {   
     if (req.isAuth) {
         try {
             let user = await User.findByPk(req.userId)
@@ -84,14 +58,6 @@ async function createAnnouncement({ photoLink, ...data }, req) {   ///+++++++
         throw new Error(unauthorizedUser)
     }
 }
-
-// async function getUser({ id }) {
-//     try {
-//         return await User.findByPk(id)
-//     } catch (e) {
-//         console.log('resolvers getUser', e)
-//     }
-// }
 
 async function getUser({ id }, req) {
     if (req.isAuth) {
@@ -320,7 +286,7 @@ async function setPhotoMain(obj, req) {
     }
 }
 
-var root = {//объект соответствия названий в type Query и type Mutation с функциями-резолверами из JS-кода
+var root = {
     getAnnouncement,
     getAnnouncements,
     searchAnnouncements,
@@ -331,15 +297,10 @@ var root = {//объект соответствия названий в type Que
     logInAuth,
     updateUser,
     getAreas,
-    // getArea,
     getCategories,
-    // getCities,
     getCurrencies,
-    // getMessages,
     createMessage,
-    // updateMessage,
     createLike,
-    // getFavourite,
     getPhones,
     createPhone,
     createPhoto,
@@ -352,9 +313,3 @@ var root = {//объект соответствия названий в type Que
 };
 
 module.exports.root = root;
-// module.exports.getUser = getUser;
-// module.exports.searchAnnouncements = searchAnnouncements;
-// module.exports.getAreas = getAreas;
-// module.exports.getArea = getArea;
-// module.exports.editAnnouncement = editAnnouncement
-// module.exports.createAnnouncement = createAnnouncement
