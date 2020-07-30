@@ -18,7 +18,7 @@ async function searchAnnouncements({ limit, offset, ...rest }) {     ///+++++++
     }
 }
 
-async function getAnnouncements({ limit, offset }) {      ///+++++++++++++++
+async function getAnnouncements({ limit, offset }) {      
     return await Announcement.findAndCountAll({
         limit,
         offset,

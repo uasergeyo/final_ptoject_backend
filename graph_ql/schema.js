@@ -50,7 +50,7 @@ var schema = buildSchema(`
         announcementHeader:String
         announcementText:String
         announcementPrice:Float
-        createdAt:Float
+        createdAt:String
         updatedAt:Int
         user:User
         area:Area

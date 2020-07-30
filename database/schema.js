@@ -37,13 +37,7 @@ class User extends Sequelize.Model {
     get area(){
         return this.getArea()
     }
-    get messages(){
-            return (async () => {
-                let ins = await this.getIns();   
-                let outs = await this.getOuts();
-                return [...ins,...outs]
-            })()
-    }
+    
     get favourite(){
         return this.getNoted_as_favourites()
     }
@@ -308,15 +302,6 @@ module.exports.Category = Category;
 module.exports.Sub_category = Sub_category;
 
 
-// ;(async () => {
-//     let currency2 =await Currency.create({ currencySymbol: "UAH" })
-//     let currency1 =await Currency.create({currencySymbol: "USD" })
-//     let currency =await Currency.create({currencySymbol: "EUR" })
-   
-
-
-//     let cat = ["Детский мир", "Недвижимость", "Транспорт", "Запчасти для транспорта",  "Работа",  "Животные",  "Дом и сад",  "Электроника",  "Бизнес и услуги",  "Мода и стиль", "Хобби, отдых и спорт",  "Отдам даром",  "Обмен"]
-//     let categoryImg=[
 //         "http://localhost:4000/content/categories/category_baby.png",
 //         "http://localhost:4000/content/categories/category_real_estate.png",
 //         "http://localhost:4000/content/categories/category_vehicles.png",
@@ -330,6 +315,30 @@ module.exports.Sub_category = Sub_category;
 //         "http://localhost:4000/content/categories/category_leisure_relax.png",
 //         "http://localhost:4000/content/categories/category_give_for_free.png",
 //         "http://localhost:4000/content/categories/category_exchange.png",
+
+
+// ;(async () => {
+//     let currency2 =await Currency.create({ currencySymbol: "UAH" })
+//     let currency1 =await Currency.create({currencySymbol: "USD" })
+//     let currency =await Currency.create({currencySymbol: "EUR" })
+   
+
+
+//     let cat = ["Детский мир", "Недвижимость", "Транспорт", "Запчасти для транспорта",  "Работа",  "Животные",  "Дом и сад",  "Электроника",  "Бизнес и услуги",  "Мода и стиль", "Хобби, отдых и спорт",  "Отдам даром",  "Обмен"]
+//     let categoryImg=[
+//         "/content/categories/category_baby.png",
+//         "/content/categories/category_real_estate.png",
+//         "/content/categories/category_vehicles.png",
+//         "/content/categories/category_spare_parts.png",
+//         "/content/categories/category_job.png",
+//         "/content/categories/category_animals.png",
+//         "/content/categories/category_house_and_garden.png",
+//         "/content/categories/category_electronics.png",
+//         "/content/categories/category_business_and_services.png",
+//         "/content/categories/category_fashion_and_style.png",
+//         "/content/categories/category_leisure_relax.png",
+//         "/content/categories/category_give_for_free.png",
+//         "/content/categories/category_exchange.png",
 //     ]
 // let subcats=[
 //         ["Детская одежда","Детская обувь", "Детские коляски","Детские автокресла", "Детская мебель","Игрушки", "Детский транспорт", "Товары для кормления", "Товары для школьников", "Прочие детские товары", ],
@@ -352,9 +361,6 @@ module.exports.Sub_category = Sub_category;
 //         let sub_category = await Sub_category.create({ subCategoryName: y,categoryId:category.id })
 //     }
 // }
-// })()
-
-// ;(async()=>{
 //     let areas=["Винницкая обл.","Волынская обл.","Днепропетровская обл.","Донецкая обл.","Житомирская обл.", "Закарпатская обл.","Запорожская обл.","Ивано-Франковская обл.","Киевская обл.","Кировоградская обл.","Крым (АРК)","Луганская обл.","Львовская обл.","Николаевская обл.","Одесская обл.","Полтавская обл.","Ровенская обл.","Сумская обл.","Тернопольская обл.","Харьковская обл.","Херсонская обл.","Хмельницкая обл.","Черкасская обл.","Черниговская обл.", "Черновицкая обл."]
 //     let cities=[
 //         ["Бар","Бершадь","Винница","Гайсин","Гнивань","Городок", "Жмеринка","Ильинцы","Казатин", "Калиновка","Крыжополь","Ладыжин", "Липовец", "Могилев-Подольский","Немиров","Песочин", "Погребище", "Стрижавка", "Тульчин", "Хмельник", "Чечельник", "Шаргород","Ямполь"],
